@@ -199,10 +199,19 @@ async def on_ready():
 
 # Run bot
 def run_bot():
+    # Try to load from .env first, then fallback to environment
+    try:
+        load_dotenv('/app/.env')
+    except:
+        pass
+    
     token = os.getenv("DISCORD_TOKEN")
     if not token:
-        raise ValueError("DISCORD_TOKEN not set in environment variables")
+        print("ERROR: DISCORD_TOKEN not found")
+        print(f"Available env vars: {[k for k in os.environ.keys() if 'DISCORD' in k or 'STRIPE' in k]}")
+        raise ValueError("DISCORD_TOKEN not set")
     
+    print(f"✅ DISCORD_TOKEN found (length: {len(token)})")
     init_db()
     client.run(token)
 
